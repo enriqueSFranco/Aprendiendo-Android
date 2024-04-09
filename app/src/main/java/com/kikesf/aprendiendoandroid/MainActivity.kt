@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.clickable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -42,15 +42,20 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AprendiendoAndroidTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Conversation(messages)
-                }
-            }
+            MyApp()
+        }
+    }
+}
+
+@Composable
+fun MyApp() {
+    AprendiendoAndroidTheme {
+        // A surface container using the 'background' color from the theme
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            Conversation(messages)
         }
     }
 }
@@ -72,7 +77,7 @@ fun MessageCard(msg: Message, modifier: Modifier = Modifier) {
         )
         Spacer(modifier = modifier.width(4.dp))
 
-        var isExpanded by remember { mutableStateOf(false) }
+        var isExpanded by rememberSaveable { mutableStateOf(false) }
         val surfaceColor by animateColorAsState(
             if (isExpanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
         )
@@ -104,7 +109,6 @@ fun MessageCard(msg: Message, modifier: Modifier = Modifier) {
     }
 
 }
-
 
 @Preview(name = "Light Mode") // 1.- PREVIEW LIGHT MODE
 @Preview(
