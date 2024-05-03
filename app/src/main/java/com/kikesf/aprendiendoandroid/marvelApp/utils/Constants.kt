@@ -17,3 +17,6 @@ class Constants {
         }
     }
 }
+
+
+// https://gateway.marvel.com/v1/public/characters?name=thor&ts=1&apikey=1342ee46b3a8207e80b268dc4b8f97a1&hash=e7538208ae63bf14cfdf1c6e4ecded44
