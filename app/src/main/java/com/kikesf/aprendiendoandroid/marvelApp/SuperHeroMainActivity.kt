@@ -11,12 +11,12 @@ import com.kikesf.aprendiendoandroid.R
 import com.kikesf.aprendiendoandroid.databinding.ActivitySuperHeroMainBinding
 import com.kikesf.aprendiendoandroid.marvelApp.models.SuperHero
 import com.kikesf.aprendiendoandroid.marvelApp.services.ApiService
+import com.kikesf.aprendiendoandroid.marvelApp.services.RetrofitServiceFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class SuperHeroMainActivity : AppCompatActivity() {
     private lateinit var binding:ActivitySuperHeroMainBinding
@@ -27,7 +27,7 @@ class SuperHeroMainActivity : AppCompatActivity() {
         binding = ActivitySuperHeroMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        retrofit = getRetrofit()
+        retrofit = RetrofitServiceFactory.makeRetrofitService()
         initUI()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -37,7 +37,7 @@ class SuperHeroMainActivity : AppCompatActivity() {
     }
 
     fun initUI() {
-        binding.searchViewHero.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding.searchHero.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 // se llama cuando pulsemos el botón de buscar
                 searchByHeroName(query.orEmpty())
@@ -46,7 +46,6 @@ class SuperHeroMainActivity : AppCompatActivity() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 // se llama cada que pulsamos una tecla
-                TODO("Not yet implemented")
                 return false
             }
 
@@ -55,20 +54,19 @@ class SuperHeroMainActivity : AppCompatActivity() {
 
     fun searchByHeroName(query: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val res: Response<SuperHero> = retrofit.create(ApiService::class.java).getSuperheros(query)
-
-            if (res.isSuccessful) {
-                Log.i("kikedev", "success")
-            } else {
-                Log.i("kikedev", "failed")
+            try {
+                val res: Response<SuperHero> = retrofit.create(ApiService::class.java).getSuperheros(name = query)
+                //println(res)
+                if (res.isSuccessful) {
+                    var data: SuperHero? = res.body()
+                    println(data.toString())
+                } else {
+                    Log.i("kikedev", "failed")
+                }
+            } catch (e: Exception) {
+                Log.i("kikedev", "Exception: ${e.message}", e)
             }
-        }
-    }
 
-    private fun getRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("https://gateway.marvel.com/v1/public/characters?name=thor&ts=1&apikey=1342ee46b3a8207e80b268dc4b8f97a1&hash=e7538208ae63bf14cfdf1c6e4ecded44")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+        }
     }
 }
