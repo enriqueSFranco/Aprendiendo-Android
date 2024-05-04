@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.kikesf.aprendiendoandroid.R
 import com.kikesf.aprendiendoandroid.databinding.ActivitySuperHeroMainBinding
 import com.kikesf.aprendiendoandroid.marvelApp.models.SuperHero
@@ -21,6 +23,8 @@ import retrofit2.Retrofit
 class SuperHeroMainActivity : AppCompatActivity() {
     private lateinit var binding:ActivitySuperHeroMainBinding
     private lateinit var retrofit: Retrofit
+    private lateinit var superHeroAdapater: SuperHeroAdapater
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -50,16 +54,27 @@ class SuperHeroMainActivity : AppCompatActivity() {
             }
 
         })
+
+        superHeroAdapater = SuperHeroAdapater()
+        binding.rvSuperheroList.setHasFixedSize(true)
+        binding.rvSuperheroList.layoutManager = LinearLayoutManager(this)
+        binding.rvSuperheroList.adapter = superHeroAdapater
     }
 
     fun searchByHeroName(query: String) {
+        binding.progressBar.isVisible = true
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val res: Response<SuperHero> = retrofit.create(ApiService::class.java).getSuperheros(name = query)
-                //println(res)
                 if (res.isSuccessful) {
                     var data: SuperHero? = res.body()
-                    println(data.toString())
+                    if (data != null) {
+                        println(data.toString())
+
+                        runOnUiThread { // ejecuta en el hilo principal ya que estamos dentro de una coroutineScope
+                            binding.progressBar.isVisible = false
+                        }
+                    }
                 } else {
                     Log.i("kikedev", "failed")
                 }
