@@ -26,7 +26,6 @@
                 android:id="@+id/iv_superhero_image"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:src="@drawable/batman"
                 />
             <TextView
                 android:id="@+id/tv_superhero_name"
