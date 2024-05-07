@@ -67,11 +67,12 @@ class SuperHeroMainActivity : AppCompatActivity() {
             try {
                 val res: Response<SuperHero> = retrofit.create(ApiService::class.java).getSuperheros(name = query)
                 if (res.isSuccessful) {
-                    var data: SuperHero? = res.body()
-                    if (data != null) {
-                        println(data.toString())
+                    var superHeroRes: SuperHero? = res.body()
+                    if (superHeroRes != null) {
+                        println(superHeroRes.toString())
 
                         runOnUiThread { // ejecuta en el hilo principal ya que estamos dentro de una coroutineScope
+                            superHeroAdapater.updateList(superHeroRes.data.results)
                             binding.progressBar.isVisible = false
                         }
                     }
