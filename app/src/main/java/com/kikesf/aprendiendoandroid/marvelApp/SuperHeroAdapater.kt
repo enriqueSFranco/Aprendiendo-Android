@@ -6,7 +6,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kikesf.aprendiendoandroid.R
 import com.kikesf.aprendiendoandroid.marvelApp.models.Result
 
-class SuperHeroAdapater(val results: List<Result> = emptyList()): RecyclerView.Adapter<SuperHeroViewHolder>() {
+class SuperHeroAdapater(var results: List<Result> = emptyList()): RecyclerView.Adapter<SuperHeroViewHolder>() {
+
+    fun updateList(results: List<Result>) {
+        this.results = results
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SuperHeroViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_super_hero, parent, false)
